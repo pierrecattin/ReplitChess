@@ -12,24 +12,38 @@ export default function GameControls({ gameState, onReset }: GameControlsProps) 
   const getStatusMessage = () => {
     switch (gameState.status) {
       case "checkmate":
-        return gameState.winner === "w" ? "You Win!" : "AI Wins!";
+        return gameState.winner === "w" ? "Checkmate - You Win!" : "Checkmate - AI Wins!";
       case "stalemate":
-        return "Stalemate!";
+        return "Game Over - Stalemate!";
       case "draw":
-        return "Draw!";
+        return "Game Over - Draw!";
       default:
         return gameState.turn === "w" ? "Your Turn" : "AI Thinking...";
     }
   };
 
+  const getStatusVariant = () => {
+    if (gameState.status === "playing") {
+      return gameState.turn === "w" ? "default" : "secondary";
+    }
+    return gameState.status === "checkmate" 
+      ? (gameState.winner === "w" ? "default" : "destructive")
+      : "outline";
+  };
+
   return (
     <div className="flex flex-col items-center gap-4">
       <div className="flex items-center gap-2">
-        <Badge variant={gameState.status === "playing" ? (gameState.turn === "w" ? "default" : "secondary") : "outline"}>
+        <Badge 
+          variant={getStatusVariant()}
+          className="text-base px-4 py-1"
+        >
           {getStatusMessage()}
         </Badge>
         {gameState.inCheck && gameState.status === "playing" && (
-          <Badge variant="destructive">Check!</Badge>
+          <Badge variant="destructive" className="animate-pulse">
+            Check!
+          </Badge>
         )}
       </div>
 
