@@ -17,15 +17,14 @@ export default function ChessPiece({ piece, square, onDrop, isPlayable }: ChessP
       return;
     }
 
-    const element = e.target as HTMLElement;
     e.dataTransfer.setData("text/plain", square);
     e.dataTransfer.effectAllowed = "move";
 
-    // Center the drag image
-    if (element) {
-      const rect = element.getBoundingClientRect();
+    // Create a drag image
+    if (ref.current) {
+      const rect = ref.current.getBoundingClientRect();
       e.dataTransfer.setDragImage(
-        element,
+        ref.current,
         rect.width / 2,
         rect.height / 2
       );
@@ -40,20 +39,21 @@ export default function ChessPiece({ piece, square, onDrop, isPlayable }: ChessP
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     const fromSquare = e.dataTransfer.getData("text/plain") as Square;
-    onDrop(fromSquare, square);
+    if (fromSquare !== square) {
+      onDrop(fromSquare, square);
+    }
   };
 
   const getPieceImage = (piece: string) => {
     const color = piece === piece.toUpperCase() ? "w" : "b";
-    const pieceType = piece.toLowerCase();
-    // Use merida piece set from lichess which has better visibility
-    return `https://raw.githubusercontent.com/lichess-org/lila/master/public/piece/merida/${color}${pieceType}.svg`;
+    const type = piece.toLowerCase();
+    return `/pieces/${color}${type}.svg`;
   };
 
   return (
     <div
       ref={ref}
-      className="absolute inset-0 cursor-grab active:cursor-grabbing"
+      className={`absolute inset-0 cursor-${isPlayable ? 'grab' : 'default'} active:cursor-grabbing`}
       draggable={isPlayable}
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
