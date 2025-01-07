@@ -140,8 +140,8 @@ export function calculateBestMove(game: Chess): Move | null {
 
   for (const move of moves) {
     game.move(move);
-    // Increased depth to 3 for better tactical awareness
-    const value = minimax(game, 3, -Infinity, Infinity, false);
+    // Decreased depth from 3 to 2 for faster response time
+    const value = minimax(game, 2, -Infinity, Infinity, false);
     game.undo();
 
     if (value > bestValue) {
