@@ -9,20 +9,30 @@ interface GameControlsProps {
 }
 
 export default function GameControls({ gameState, onReset }: GameControlsProps) {
+  const getStatusMessage = () => {
+    switch (gameState.status) {
+      case "checkmate":
+        return gameState.winner === "w" ? "You Win!" : "AI Wins!";
+      case "stalemate":
+        return "Stalemate!";
+      case "draw":
+        return "Draw!";
+      default:
+        return gameState.turn === "w" ? "Your Turn" : "AI Thinking...";
+    }
+  };
+
   return (
     <div className="flex flex-col items-center gap-4">
       <div className="flex items-center gap-2">
-        <Badge variant={gameState.turn === "w" ? "default" : "secondary"}>
-          {gameState.turn === "w" ? "Your Turn" : "AI Thinking..."}
+        <Badge variant={gameState.status === "playing" ? (gameState.turn === "w" ? "default" : "secondary") : "outline"}>
+          {getStatusMessage()}
         </Badge>
-        {gameState.inCheck && (
+        {gameState.inCheck && gameState.status === "playing" && (
           <Badge variant="destructive">Check!</Badge>
         )}
-        {gameState.status === "gameOver" && (
-          <Badge variant="destructive">Game Over</Badge>
-        )}
       </div>
-      
+
       <Button
         variant="outline"
         onClick={onReset}

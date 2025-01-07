@@ -14,8 +14,34 @@ function Game() {
     status: "playing",
     turn: "w",
     inCheck: false,
+    winner: undefined, // Added winner field
   });
   const { toast } = useToast();
+
+  const updateGameState = useCallback((game: Chess) => {
+    const inCheck = game.isCheck();
+    const moves = game.moves();
+    let status: GameState["status"] = "playing";
+    let winner: GameState["winner"] = undefined;
+
+    if (moves.length === 0) {
+      if (inCheck) {
+        status = "checkmate";
+        winner = game.turn() === "w" ? "b" : "w";
+      } else {
+        status = "stalemate";
+      }
+    } else if (game.isDraw()) {
+      status = "draw";
+    }
+
+    return {
+      status,
+      turn: game.turn(),
+      inCheck,
+      winner,
+    };
+  }, []);
 
   const makeMove = useCallback((from: string, to: string) => {
     try {
@@ -28,24 +54,17 @@ function Game() {
       if (move) {
         const newGame = new Chess(game.fen());
         setGame(newGame);
-        setGameState({
-          status: newGame.isGameOver() ? "gameOver" : "playing",
-          turn: newGame.turn(),
-          inCheck: newGame.isCheck(),
-        });
+        const newState = updateGameState(newGame);
+        setGameState(newState);
 
         // If the game isn't over and it's black's turn, make AI move
-        if (!newGame.isGameOver() && newGame.turn() === "b") {
+        if (newState.status === "playing" && newState.turn === "b") {
           setTimeout(() => {
             const aiMove = calculateBestMove(newGame);
             if (aiMove) {
               newGame.move(aiMove);
               setGame(new Chess(newGame.fen()));
-              setGameState({
-                status: newGame.isGameOver() ? "gameOver" : "playing",
-                turn: newGame.turn(),
-                inCheck: newGame.isCheck(),
-              });
+              setGameState(updateGameState(newGame));
             }
           }, 500);
         }
@@ -57,14 +76,16 @@ function Game() {
         variant: "destructive",
       });
     }
-  }, [game, toast]);
+  }, [game, toast, updateGameState]);
 
   const resetGame = useCallback(() => {
-    setGame(new Chess());
+    const newGame = new Chess();
+    setGame(newGame);
     setGameState({
       status: "playing",
       turn: "w",
       inCheck: false,
+      winner: undefined, // Added winner field
     });
   }, []);
 
