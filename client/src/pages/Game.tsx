@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import ChessBoard from "@/components/ChessBoard";
 import GameControls from "@/components/GameControls";
+import VictoryAnimation from "@/components/VictoryAnimation";
 import { calculateBestMove } from "@/lib/chessAI";
 import type { GameState } from "@/lib/gameTypes";
 
@@ -14,7 +15,7 @@ function Game() {
     status: "playing",
     turn: "w",
     inCheck: false,
-    winner: undefined, // Added winner field
+    winner: undefined,
   });
   const { toast } = useToast();
 
@@ -85,14 +86,17 @@ function Game() {
       status: "playing",
       turn: "w",
       inCheck: false,
-      winner: undefined, // Added winner field
+      winner: undefined,
     });
   }, []);
 
   return (
     <div className="min-h-screen bg-background p-4 flex flex-col items-center justify-center">
       <Card className="w-full max-w-2xl">
-        <CardContent className="p-6">
+        <CardContent className="p-6 relative">
+          <VictoryAnimation 
+            show={gameState.status === "checkmate" && gameState.winner === "w"} 
+          />
           <div className="space-y-6">
             <div className="text-center">
               <h1 className="text-3xl font-bold mb-2">Chess Game</h1>
