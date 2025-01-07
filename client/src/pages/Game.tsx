@@ -9,7 +9,7 @@ import { calculateBestMove } from "@/lib/chessAI";
 import type { GameState } from "@/lib/gameTypes";
 
 function Game() {
-  const [game, setGame] = useState(new Chess());
+  const [game, setGame] = useState<Chess>(new Chess());
   const [gameState, setGameState] = useState<GameState>({
     status: "playing",
     turn: "w",
@@ -26,24 +26,25 @@ function Game() {
       });
 
       if (move) {
-        setGame(new Chess(game.fen()));
+        const newGame = new Chess(game.fen());
+        setGame(newGame);
         setGameState({
-          status: game.isGameOver() ? "gameOver" : "playing",
-          turn: game.turn(),
-          inCheck: game.isCheck(),
+          status: newGame.isGameOver() ? "gameOver" : "playing",
+          turn: newGame.turn(),
+          inCheck: newGame.isCheck(),
         });
 
         // If the game isn't over and it's black's turn, make AI move
-        if (!game.isGameOver() && game.turn() === "b") {
+        if (!newGame.isGameOver() && newGame.turn() === "b") {
           setTimeout(() => {
-            const aiMove = calculateBestMove(game);
+            const aiMove = calculateBestMove(newGame);
             if (aiMove) {
-              game.move(aiMove);
-              setGame(new Chess(game.fen()));
+              newGame.move(aiMove);
+              setGame(new Chess(newGame.fen()));
               setGameState({
-                status: game.isGameOver() ? "gameOver" : "playing",
-                turn: game.turn(),
-                inCheck: game.isCheck(),
+                status: newGame.isGameOver() ? "gameOver" : "playing",
+                turn: newGame.turn(),
+                inCheck: newGame.isCheck(),
               });
             }
           }, 500);

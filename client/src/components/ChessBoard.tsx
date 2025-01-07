@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import type { Square } from "chess.js";
-import ChessPiece from "./ChessPiece";
+import ChessPiece from "@/components/ChessPiece";
 import type { GameState } from "@/lib/gameTypes";
 
 interface ChessBoardProps {
@@ -19,7 +19,7 @@ export default function ChessBoard({ position, onMove, gameState }: ChessBoardPr
     const [file, rank] = square.split('');
     const fileIndex = files.indexOf(file);
     const rankIndex = ranks.indexOf(rank);
-    
+
     let count = 0;
     for (let char of rows[rankIndex]) {
       if (isNaN(parseInt(char))) {
