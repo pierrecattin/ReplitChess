@@ -16,11 +16,11 @@ export default function ChessPiece({ piece, square, onDrop, isPlayable }: ChessP
       e.preventDefault();
       return;
     }
-    
+
     const element = e.target as HTMLElement;
     e.dataTransfer.setData("text/plain", square);
     e.dataTransfer.effectAllowed = "move";
-    
+
     // Center the drag image
     if (element) {
       const rect = element.getBoundingClientRect();
@@ -46,7 +46,8 @@ export default function ChessPiece({ piece, square, onDrop, isPlayable }: ChessP
   const getPieceImage = (piece: string) => {
     const color = piece === piece.toUpperCase() ? "w" : "b";
     const pieceType = piece.toLowerCase();
-    return `https://raw.githubusercontent.com/lichess-org/lila/master/public/piece/cburnett/${color}${pieceType}.svg`;
+    // Use merida piece set from lichess which has better visibility
+    return `https://raw.githubusercontent.com/lichess-org/lila/master/public/piece/merida/${color}${pieceType}.svg`;
   };
 
   return (

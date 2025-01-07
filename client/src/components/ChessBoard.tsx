@@ -29,6 +29,7 @@ export default function ChessBoard({ position, onMove, gameState }: ChessBoardPr
         count++;
       } else {
         count += parseInt(char);
+        if (count > fileIndex) break;
       }
     }
     return null;
@@ -53,7 +54,7 @@ export default function ChessBoard({ position, onMove, gameState }: ChessBoardPr
               <div
                 key={square}
                 className={`relative ${
-                  isLight ? 'bg-secondary' : 'bg-primary'
+                  isLight ? 'bg-accent' : 'bg-muted'
                 }`}
                 data-square={square}
               >
@@ -62,7 +63,7 @@ export default function ChessBoard({ position, onMove, gameState }: ChessBoardPr
                     piece={piece}
                     square={square as Square}
                     onDrop={handleDrop}
-                    isPlayable={gameState.status === "playing" && gameState.turn === "w"}
+                    isPlayable={gameState.status === "playing" && gameState.turn === "w" && piece === piece.toUpperCase()}
                   />
                 )}
               </div>
