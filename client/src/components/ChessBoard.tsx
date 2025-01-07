@@ -13,7 +13,6 @@ const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 const ranks = ['8', '7', '6', '5', '4', '3', '2', '1'];
 
 export default function ChessBoard({ position, onMove, gameState }: ChessBoardProps) {
-  // Parse FEN string to get piece at a square
   const getPiece = useCallback((square: string): string | null => {
     const [file, rank] = square.split('');
     const fileIndex = files.indexOf(file);
@@ -45,22 +44,9 @@ export default function ChessBoard({ position, onMove, gameState }: ChessBoardPr
     }
   }, [onMove, gameState]);
 
-  const handleSquareDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = "move";
-  };
-
-  const handleSquareDrop = (e: React.DragEvent, square: Square) => {
-    e.preventDefault();
-    const fromSquare = e.dataTransfer.getData("text/plain") as Square;
-    if (fromSquare !== square) {
-      handleDrop(fromSquare, square);
-    }
-  };
-
   return (
     <div className="aspect-square w-full max-w-[600px] mx-auto border-2 border-primary">
-      <div className="grid grid-cols-8 h-full">
+      <div className="grid grid-cols-8 h-full touch-none">
         {ranks.map((rank) => (
           files.map((file) => {
             const square = `${file}${rank}` as Square;
@@ -74,8 +60,6 @@ export default function ChessBoard({ position, onMove, gameState }: ChessBoardPr
                   isLight ? 'bg-white' : 'bg-gray-400'
                 } ${gameState.status === "playing" && gameState.turn === "w" ? 'hover:bg-blue-100' : ''}`}
                 data-square={square}
-                onDragOver={handleSquareDragOver}
-                onDrop={(e) => handleSquareDrop(e, square)}
               >
                 {piece && (
                   <ChessPiece
